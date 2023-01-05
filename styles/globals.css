@@ -168,6 +168,13 @@ form button:focus {
   background-color: #83dcff;
 }
 
+.snackbar {
+  font-size: .5rem;
+  color: green;
+  background-color: green;
+}
+
+
 @media only screen and (max-height: 860px) {
   .presentation {
     height: 1000px;
