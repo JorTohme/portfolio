@@ -13,12 +13,12 @@ export default function Contact ({ theme }) {
 
   function handleSubmit (e) {
     event.preventDefault()
-    Array.from(document.querySelectorAll('input')).forEach(input => (input.value = ''))
-    Array.from(document.querySelectorAll('textarea')).forEach(input => (input.value = ''))
 
     emailJS.init('3PLy86Z4Yf6VzDNPV')
     emailJS.sendForm('service_t7w4ejr', 'template_nhhu5ve', '#form').then(res => {
       setSnackBar(true)
+      Array.from(document.querySelectorAll('input')).forEach(input => (input.value = ''))
+      Array.from(document.querySelectorAll('textarea')).forEach(input => (input.value = ''))
     }).catch(err => {
       console.log(err)
     })
