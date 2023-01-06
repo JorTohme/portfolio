@@ -1,52 +1,13 @@
 .themeButton {
   background: var(--LightMode-Button);
-  border: 2px solid #ffffff;
-  z-index: 999;
-}
-
-.header {
-  position: absolute;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-
-  padding: 10px;
 }
 
 .nav {
-  width: 100%;
-  font-size: .5rem;
   color: var(--LightMode-Text);
 }
 
-.ul {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-}
-
-.li {
-  display: block;
-  position: relative;
-}
-
 .li:after {
-  content: '';
-  position: absolute;
-  width: 100%;
-  transform: scaleX(0);
-  height: 2px;
-  bottom: 0;
-  left: 0;
   background-color: var(--LightMode-Text);
-  transform-origin: bottom right;
-  transition: transform 0.25s ease-out;
-}
-
-.li:hover:after {
-  transform: scaleX(1);
-  transform-origin: bottom left;
 }
 
 .presentation {
@@ -59,175 +20,38 @@
 
 .h1 {
   color: var(--LightMode-Text);
-  font-size: 1.7rem;
-  padding-left: 10px;
-  animation: slide-in 1s;
 }
 
 .h2 {
   color: var(--LightMode-Text);
-  font-size: 1rem;
-  padding-left: 10px;
-  animation: slide-in 1s;
-}
-
-.aboutMe {
-  animation: slide-in 1.2s;
-  padding: 0 10px;
-}
-
-.photo {
-  border: 3px solid #000000;
-  animation: slide-in 1.5s;
 }
 
 .projects {
-  height: fit-content;
   background: #e4d3da;
-
-  padding: 100px 10px;
-  transition: background-color 0.5s ease;
 }
 
 .sectionTitle {
   color: var(--LightMode-Text);
-  font-size: 1.4rem;
-
-  animation: slide-in 1s;
-}
-
-.projectsContainer {
-  display: flex;
-  flex-direction: column;
-  margin-top: 70px;
-
-  gap: 40px;
 }
 
 .project {
-  /* Para lazyload */
-  display: flex;
-
-  flex-direction: column;
-
-  width: 90vw;
-  height: fit-content;
-  padding: 20px;
   background-color: var(--Light-Transparent);
-  border-radius: 20px;
-  align-items: center;
-
-  overflow: hidden;
-}
-
-.projectLeft {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-}
-
-.projectRight {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-}
-
-
-
-.projectInfo {
-  display: flex;
-  gap: 10px;
 }
 
 .projectName {
   color: var(--LightMode-Text);
-  font-size: 1.2rem;
-  text-align: center;
-  width: auto;
-
-  margin-top: 10px;
 }
-
-.projectDataContainer {
-  width: 100%;
-}
-
-.projectImage {
-  border-radius: 15px;
-}
-
-.projectImageContainer {
-  position: relative;
-  border-radius: 10px;
-  width: 100%;
-  height: 200px;
-}
-
 
 .projectDescription {
   color: var(--LightMode-Text);
-  margin: 10px 0 0 0;
-  font-size: 0.6rem;
-  text-align: center;
-  width: auto;
-  font-weight: 300;
-  text-align: left;
-  padding: 15px;
-
-}
-
-.otherProjects {
-  margin-top: 40px;
-  font-size: 0.7rem;
-  text-align: center;
 }
 
 .technologies {
-  height: fit-content;
   background: #e4d3da;
-  padding: 10vh 10px 0 10px;
-  transition: background-color 0.5s ease;
-}
-
-.technologiesContainer {
-  width: 100%;
-  height: fit-content;
-  padding: 20px;
-  margin-top: 20px;
-
-  display: flex;
-  gap: 50px;
-  flex-wrap: wrap;
-  flex-direction: row;
-  row-gap: 20px;
-
-  justify-content: space-evenly;
 }
 
 .technology {
   background-color: var(--Light-Transparent);
-  border-radius: 25px;
-  width: 130px;
-  height: 130px;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.contact {
-  height: fit-content;
-  padding: 10vh 10px 0 20px;
-}
-
-.social {
-  margin: 50px 0 0 0;
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: row;
-  gap: 20px;
-
-  font-size: .7rem;
 }
 
 .social div {
@@ -235,24 +59,7 @@
   gap: 20px;
 }
 
-.cv {
-  padding: 100px 10px 20px 10px;
-}
-
-.downloadContainer {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 40px;
-}
-
 .downloadCV {
-  width: fit-content;
-  height: fit-content;
-  padding: 20px;
-  border-radius: 10px;
-  background: rgb(192, 129, 210);
-  transition: background-color 0.5s ease;
   color: var(--LightMode-Text);
 }
 
@@ -262,104 +69,4 @@
   background-repeat: no-repeat;
   background-position: right;
   background-size: auto 100%;
-}
-
-@keyframes slide-in {
-  0% {
-    transform: translateX(-100%);
-    opacity: 0;
-  }
-
-  100% {
-    transform: translateX(0%);
-    opacity: 1;
-  }
-}
-
-/* Small devices (portrait tablets and large phones, 600px and up) */
-@media only screen and (min-width: 600px) {
-  .h1 {
-    font-size: 1.9rem;
-  }
-
-  .h2 {
-    font-size: 1.2rem;
-  }
-
-  .projectImageContainer {
-    width: 400px;
-    height: 225px;
-  }
-}
-
-/* Medium devices (landscape tablets, 768px and up) */
-@media only screen and (min-width: 768px) {
-  .projectImageContainer {
-    width: 500px;
-    height: 282px;
-  }
-
-  .projectLeft {
-    justify-content: left;
-  }
-
-  .projectRight {
-    justify-content: right;
-  }
-
-  .nav {
-    width: 50%;
-  }
-
-  .presentation {
-    height: 90vh;
-  }
-}
-
-/* Large devices (laptops/desktops, 992px and up) */
-@media only screen and (min-width: 992px) {
-  .project {
-    flex-direction: row;
-  }
-
-  .projectImageContainer {
-    width: 800px;
-    height: 282px;
-  }
-
-  .project {
-    max-width: 55vw;
-  }
-
-  .projects {
-    padding: 10vh 20vw;
-  }
-
-  .technologies {
-    padding: 0 20vw 10vh 20vw;
-  }
-
-  .technologiesContainer {
-    margin-top: 100px;
-    row-gap: 60px;
-  }
-
-  .contact {
-    padding: 10vh 20vw 0 20vw;
-  }
-
-  .cv {
-    padding: 10vh 20vw;
-  }
-}
-
-/* Extra large devices (large laptops and desktops, 1200px and up) */
-@media only screen and (min-width: 1700px) {
-  .project {
-    max-width: 45vw;
-  }
-
-  .projects {
-    padding: 10vh 20vw;
-  }
 }

@@ -25,8 +25,8 @@ export default function Contact ({ theme }) {
   }
 
   return (
-    <div className={`${theme.contact} ${albertSansBold.className}`} id='contact'>
-      <div className={`${theme.sectionTitle} ${albertSansBold.className}`}>Contacto</div>
+    <div className={`${theme.contact} ${albertSansBold.className} contact`} id='contact'>
+      <div className={`${theme.sectionTitle} ${albertSansBold.className} sectionTitle`}>Contacto</div>
       <div className={`${theme.hola} ${albertSansLight.className}`}>
         <form onSubmit={handleSubmit} id='form'>
           <label htmlFor='name'>Nombre </label>
@@ -52,7 +52,7 @@ export default function Contact ({ theme }) {
             />
           </Snackbar>
         </form>
-        <div className={theme.social}>
+        <div className='social'>
           O contáctame por mis redes:
           <div>
             <a href='https://www.linkedin.com/in/jorgetohme/' target='_blank' rel='noreferrer'>

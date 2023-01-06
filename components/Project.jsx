@@ -12,19 +12,19 @@ export default function Project ({ theme, projectName, imageSrc, children }) {
   return (
     <div ref={ref}>
       <div
-        className={theme.project}
+        className={`${theme.project} project`}
         style={{
           transform: isInView ? 'none' : 'translateX(-200px)',
           opacity: isInView ? 1 : 0,
           transition: 'all 1.2s ease'
         }}
       >
-        <div className={theme.projectImageContainer}>
-          <Image src={imageSrc} alt={projectName} className={theme.projectImage} fill />
+        <div className='projectImageContainer'>
+          <Image src={imageSrc} alt={projectName} className='projectImage' fill />
         </div>
-        <div className={theme.projectDataContainer}>
-          <div className={`${theme.projectName} ${albertSansBold.className}`}> {projectName} </div>
-          <div className={theme.projectDescription}>
+        <div className='projectDataContainer'>
+          <div className={`${theme.projectName} ${albertSansBold.className} projectName`}> {projectName} </div>
+          <div className={`${theme.projectDescription} projectDescription`}>
             {children}
           </div>
 

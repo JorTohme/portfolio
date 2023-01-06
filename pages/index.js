@@ -33,9 +33,9 @@ export default function Home () {
             <Image className={`photo ${theme.photo}`} src='/jorge.JPEG' alt='Una foto de mi' fill priority />
           </div>
           <div className='aboutMe--Container'>
-            <h1 className={`${albertSans.className} ${theme.h1}`}>Jorge L. Tohmé</h1>
-            <h2 className={`${albertSans.className} ${theme.h2}`}>Full Stack developer</h2>
-            <p className={`${sora.className} aboutMe ${theme.aboutMe}`}>
+            <h1 className={`${albertSans.className} ${theme.h1} h1`}>Jorge L. Tohmé</h1>
+            <h2 className={`${albertSans.className} ${theme.h2} h2`}>Full Stack developer</h2>
+            <p className={`${sora.className} ${theme.aboutMe} aboutMe`}>
               ¡Hola! Me llamo Jorge. Soy de <span>Mendoza, Argentina</span> y soy estudiante de la carrera de
               <span> Licenciatura de Informática y Desarrollo de Software </span>en Universidad del Aconcagua. También estoy aprendiendo Data Analysis.
               Me interesan otras herramientas que no son de programación como Illustrator, Photoshop, After Effects, etc.
