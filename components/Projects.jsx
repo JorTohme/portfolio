@@ -12,7 +12,7 @@ export default function Projects ({ theme }) {
       <div className={`${albertSansLight.className} projectsContainer`}>
 
         <div className='projectLeft'>
-          <Project theme={theme} projectName='Codeshow' imageSrc='/projects/codeshow.png'>
+          <Project theme={theme} projectName='Codeshow' imageSrc='/projects/codeshow.png' projectLink='https://codeshow.vercel.app/' projectRepo='https://github.com/JorTohme/codeshow'>
             Codeshow es una app web inspirada en <a href='https://codepen.io/' target='_blank' rel='noreferrer'>Codepen</a> donde se puede codear en la web. <br /> <br />
             La página tiene 3 secciones de código (una de HTML, una de CSS y una de JS) y un espacio para ver el resultado de la combinación de los 3.
           </Project>
