@@ -12,10 +12,9 @@ export default function Projects ({ theme }) {
       <div className={`${albertSansLight.className} projectsContainer`}>
 
         <div className='projectLeft'>
-          <Project theme={theme} projectName='Marflix' imageSrc='/projects/marflix.png'>
-            Clon funcional de Netflix programado en Next.js en el front y con una API en Express.js en el brackend
-            que entrega la información de los videos.
-            Sigue en progreso.
+          <Project theme={theme} projectName='Codeshow' imageSrc='/projects/codeshow.png'>
+            Codeshow es una app web inspirada en <a href='https://codepen.io/' target='_blank' rel='noreferrer'>Codepen</a> donde se puede codear en la web. <br /> <br />
+            La página tiene 3 secciones de código (una de HTML, una de CSS y una de JS) y un espacio para ver el resultado de la combinación de los 3.
           </Project>
         </div>
 
