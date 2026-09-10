@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#174c38">
+  <title>Jorge Tohmé — Always under construction</title>
+  <meta name="description" content="Web and mobile development, and a lot of curiosity. A walk through the projects and lessons of Jorge Tohmé.">
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="canonical" href="/en/">
+  <link rel="alternate" hreflang="es" href="/">
+  <link rel="alternate" hreflang="en" href="/en/">
+  <link rel="alternate" hreflang="x-default" href="/">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../style.css">
+  <link rel="preload" href="../index.html" as="fetch" crossorigin>
+</head>
+<body>
+  <noscript><p style="padding:2rem;font-family:system-ui">This page builds itself from the Spanish version with JavaScript. <a href="../" style="text-decoration:underline">Open the site in Spanish</a>.</p></noscript>
+  <script type="module">
+    // Same markup as the Spanish page, translated before it is ever painted:
+    // the document is parsed detached, run through the dictionary, and only then
+    // handed to the live DOM. Nothing in Spanish reaches the screen.
+    import { apply } from '../i18n.js';
+    import { EN } from '../i18n/en.js';
+
+    const source = await fetch('../index.html').then(r => r.text());
+    const doc = new DOMParser().parseFromString(source, 'text/html');
+    apply(doc, EN);
+
+    // Asset paths are written relative to the site root; this page lives one
+    // level down. Link hrefs are deliberately left alone: "./juego.html" should
+    // resolve to the English game, and "#anchors" must stay in-page.
+    for (const el of doc.body.querySelectorAll('[src],[srcset]')) {
+      for (const attr of ['src', 'srcset']) {
+        const v = el.getAttribute(attr);
+        if (v && v.startsWith('./')) el.setAttribute(attr, '.' + v);
+      }
+    }
+    // innerHTML never runs scripts, so main.js is imported by hand below.
+    doc.querySelectorAll('script').forEach(s => s.remove());
+
+    document.body.innerHTML = doc.body.innerHTML;
+    globalThis.__I18N = EN;
+    await import('../main.js');
+  </script>
+</body>
+</html>

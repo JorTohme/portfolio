@@ -127,3 +127,10 @@ main{z-index:2}
    reads muddy rather than strong. */
 .chapter-meta>span:last-child{font-size:1.25rem;font-weight:700;letter-spacing:.01em;opacity:.88}
 @media(max-width:900px){.chapter-meta>span:last-child{font-size:1.0625rem}}
+
+/* Language switch, grouped with the contact link so the header keeps its
+   three-part balance instead of spreading four children apart. */
+.header-end{display:flex;align-items:center;gap:20px}
+.lang-switch{font-family:var(--mono);font-size:.75rem;letter-spacing:.06em;border:1px solid var(--line);border-radius:4px;padding:9px 11px;min-height:38px;display:flex;align-items:center;transition:background .25s,color .25s}
+.lang-switch:hover{background:var(--ink);color:var(--blue)}
+@media(max-width:900px){.header-end{gap:12px}.lang-switch{padding:8px 9px;font-size:.6875rem;min-height:36px}}

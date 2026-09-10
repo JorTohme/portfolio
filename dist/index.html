@@ -8,6 +8,10 @@
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="canonical" href="/">
+  <link rel="alternate" hreflang="es" href="/">
+  <link rel="alternate" hreflang="en" href="/en/">
+  <link rel="alternate" hreflang="x-default" href="/">
   <link rel="stylesheet" href="./style.css">
 </head>
 <body>
@@ -19,22 +23,22 @@
   <div class="scene-wrap" aria-hidden="true"><canvas id="world"></canvas><div class="scene-fallback"></div></div>
   <div class="noise" aria-hidden="true"></div>
   <header class="header">
-    <a class="wordmark" href="#inicio" aria-label="Jorge Tohmé, inicio">jt<span class="wordmark-star">✳</span></a>
-    <nav aria-label="Navegación principal"><a href="#recorrido">Recorrido</a><a href="#estudios">Estudios</a><a href="#aprendizajes">Lo que me llevo</a></nav>
-    <a class="contact-link" href="mailto:jorlopeztohme@gmail.com">Hablemos <span aria-hidden="true">↗</span></a>
+    <a class="wordmark" href="#inicio" aria-label="Jorge Tohmé, inicio" data-i18n-attr="aria-label@nav.home">jt<span class="wordmark-star">✳</span></a>
+    <nav aria-label="Navegación principal" data-i18n-attr="aria-label@nav.label"><a href="#recorrido" data-i18n="nav.journey">Recorrido</a><a href="#estudios" data-i18n="nav.studies">Estudios</a><a href="#aprendizajes" data-i18n="nav.learning">Lo que me llevo</a></nav>
+    <div class="header-end"><a class="lang-switch" href="./en/" hreflang="en" aria-label="Ver este sitio en inglés" data-i18n="lang.label" data-i18n-attr="href@lang.href;aria-label@lang.aria;hreflang@lang.code">EN</a><a class="contact-link" href="mailto:jorlopeztohme@gmail.com" data-i18n="nav.contact">Hablemos <span aria-hidden="true">↗</span></a></div>
   </header>
   <main>
     <section id="inicio" class="hero" data-scene="0">
-      <div class="hero-kicker"><span class="tiny-cross">+</span> FULLSTACK DEVELOPER <span class="kicker-slash">/</span>IA ORCHESTATOR</div>
+      <div class="hero-kicker" data-i18n="hero.kicker"><span class="tiny-cross">+</span> FULLSTACK DEVELOPER <span class="kicker-slash">/</span>IA ORCHESTATOR</div>
       <h1>Jorge<br><span class="outline-word">Tohmé.</span></h1>
-      <div class="hero-bottom"><p>Un pequeño recorrido por ideas que se hicieron código.<br>Código que se vuelve algo real.<br><span>A dónde estoy y a dónde voy</span></p><a href="#recorrido" class="round-link"><span class="circle-arrow" aria-hidden="true">↓</span><span>Seguí el recorrido</span></a></div>
+      <div class="hero-bottom"><p data-i18n="hero.intro">Un pequeño recorrido por ideas que se hicieron código.<br>Código que se vuelve algo real.<br><span>A dónde estoy y a dónde voy</span></p><a href="#recorrido" class="round-link"><span class="circle-arrow" aria-hidden="true">↓</span><span data-i18n="hero.cta">Seguí el recorrido</span></a></div>
       <div class="mobile-scene-slot" aria-hidden="true"></div>
-      <span class="scene-note">EXPLORÁ EL MUNDO CON EL SCROLL ↓</span>
-      <button class="play-button" id="explode" aria-pressed="false"><span aria-hidden="true">✳</span> ¿Y si lo desarmamos?</button>
-      <div class="hero-footer"><span>DESDE ARGENTINA.</span><span>DESLIZÁ PARA EXPLORAR ↓</span></div>
+      <span class="scene-note" data-i18n="hero.sceneNote">EXPLORÁ EL MUNDO CON EL SCROLL ↓</span>
+      <button class="play-button" id="explode" aria-pressed="false" data-i18n="explode.take"><span aria-hidden="true">✳</span> ¿Y si lo desarmamos?</button>
+      <div class="hero-footer"><span data-i18n="hero.footerA">DESDE ARGENTINA.</span><span data-i18n="hero.footerB">DESLIZÁ PARA EXPLORAR ↓</span></div>
     </section>
     <section id="recorrido" class="journey" aria-labelledby="journey-title">
-      <div class="journey-intro"><span class="eyebrow">01 / MI RECORRIDO LABORAL</span><h2 id="journey-title">Experiencia<br>formal.</h2><p>Cada proyecto dejó una pieza.<br>Esta es la historia de cómo se conectan.</p></div>
+      <div class="journey-intro"><span class="eyebrow" data-i18n="journey.eyebrow">01 / MI RECORRIDO LABORAL</span><h2 id="journey-title" data-i18n="journey.title">Experiencia<br>formal.</h2><p data-i18n="journey.intro">Cada proyecto dejó una pieza.<br>Esta es la historia de cómo se conectan.</p></div>
       <article class="chapter" data-scene="1" id="capitulo-1"><div class="chapter-content"><div class="chapter-meta"><span>01</span><span>2024 - ACTUALIDAD</span></div><h3><span class="chapter-name"><img class="chapter-logo" src="./assets/darwoft_logo.jpg" alt="" width="400" height="400">Darwoft</span></h3>
         <div class="chapter-project-item"><span class="chapter-project">Praga / Grupo Austral</span><span class="eyebrow">Otra forma de construir.</span><p>Una operación agrícola que salió de WhatsApp. Nuevos desafíos, automatización e IA como parte del proceso.</p><div class="tags"><span>Next.js</span><span>PostgreSQL</span><span>SDD + IA</span></div><details><summary>La pieza que me llevo <span aria-hidden="true">+</span></summary><p>Primera experiencie liderando un proyecto entero con IA, desde su nacimiento hasta la puesta en producción; las nuevas técnicas de toma de requisitos, modelado del sistema, entregas rápidas, feedback y ciclo de vida con IA integrado.</p></details></div>
         <div class="chapter-project-item"><span class="chapter-project">Claro</span><span class="eyebrow">Resultados visibles.</span><p>Decenas de miles de leads perdidos, solución en tiempo record.</p><div class="tags"><span>Express.js</span><span>Oracle</span><span>n8n</span><span>Marketing</span></div><details><summary>La pieza que me llevé <span aria-hidden="true">+</span></summary><p>Solución concreta para un problema que afectaba a Claro a nivel regional. Construcción del proyecto solo y resultados visibles al instante, grandes mejoras en las métricas. Reconocimiento de Claro.</p></details></div>

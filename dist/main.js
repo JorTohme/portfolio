@@ -1,14 +1,16 @@
 import * as THREE from './three.module.js';
 import { VoxelRenderer } from './voxel-renderer.js';
 import { BOX, createMaterials, buildCharacter, buildTree } from './voxel-models.js';
+// The English page hands us its dictionary on the global; the Spanish page has none.
+const t=(key,fallback)=>globalThis.__I18N?.[key]??fallback;
 const reduced=matchMedia('(prefers-reduced-motion: reduce)'),small=matchMedia('(max-width:900px)');
 let paused=reduced.matches,exploded=false,stage=0,routeProgress=0,scenePass=.5;
 const motionButton=document.querySelector('#motion'),explodeButton=document.querySelector('#explode'),sceneWrap=document.querySelector('.scene-wrap'),dock=document.querySelector('.journey-dock'),chapters=[...document.querySelectorAll('.chapter')],sceneSections=[...document.querySelectorAll('[data-scene]')],progress=document.querySelector('.scroll-progress');
 for(const el of [...chapters,document.querySelector('.ending')]){const slot=document.createElement('div');slot.className='mobile-scene-slot';slot.setAttribute('aria-hidden','true');el.append(slot);}
 function mountScene(){const section=sceneSections.find(el=>Number(el.dataset.scene)===stage),slot=section?.querySelector('.mobile-scene-slot'),parent=small.matches&&slot?slot:document.body;if(sceneWrap.parentElement!==parent)parent.prepend(sceneWrap);}
-function motionLabel(){motionButton.setAttribute('aria-pressed',String(paused));motionButton.setAttribute('aria-label',paused?'Activar animaciones':'Pausar animaciones');motionButton.textContent=paused?'▷':'Ⅱ';document.body.classList.toggle('paused',paused);document.documentElement.style.scrollBehavior=paused?'auto':'';}
+function motionLabel(){motionButton.setAttribute('aria-pressed',String(paused));motionButton.setAttribute('aria-label',paused?t('motion.play','Activar animaciones'):t('motion.pause','Pausar animaciones'));motionButton.textContent=paused?'▷':'Ⅱ';document.body.classList.toggle('paused',paused);document.documentElement.style.scrollBehavior=paused?'auto':'';}
 motionButton.addEventListener('click',()=>{paused=!paused;motionLabel();onScroll();});reduced.addEventListener('change',e=>{paused=e.matches;motionLabel();onScroll();});motionLabel();
-explodeButton.addEventListener('click',()=>{exploded=!exploded;explodeButton.setAttribute('aria-pressed',String(exploded));explodeButton.innerHTML=exploded?'<span aria-hidden="true">↶</span> Volvamos a construir':'<span aria-hidden="true">✳</span> ¿Y si lo desarmamos?';});
+explodeButton.addEventListener('click',()=>{exploded=!exploded;explodeButton.setAttribute('aria-pressed',String(exploded));explodeButton.innerHTML=exploded?t('explode.rebuild','<span aria-hidden="true">↶</span> Volvamos a construir'):t('explode.take','<span aria-hidden="true">✳</span> ¿Y si lo desarmamos?');});
 let positions=[];
 const depthSections=[...document.querySelectorAll('.hero,.chapter,.learning,.ending')];
 function updateDepth(){
@@ -35,7 +37,7 @@ addEventListener('scroll',onScroll,{passive:true});addEventListener('resize',()=
 addEventListener('pointermove',e=>{if(small.matches||e.pointerType!=='mouse')return;const r=sceneWrap.getBoundingClientRect();document.body.classList.toggle('scene-hot',e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom);},{passive:true});
 addEventListener('pointerleave',()=>document.body.classList.remove('scene-hot'));
 if(!reduced.matches&&'IntersectionObserver'in window){const observer=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');observer.unobserve(e.target);}}),{threshold:.08});document.querySelectorAll('.chapter-content,.learning-list>div,.study-row,.journey-intro').forEach(el=>{el.classList.add('reveal');observer.observe(el);});}
-try{createWorld();}catch(error){document.body.classList.add('webgl-unavailable');console.warn('La escena 3D no está disponible.',error);}
+try{createWorld();}catch(error){document.body.classList.add('webgl-unavailable');console.warn(t('scene.unavailable','La escena 3D no está disponible.'),error);}
 function createWorld(){
 let canvas=document.querySelector('#world'),renderer;
 try { renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true,powerPreference:'low-power'}); }
