@@ -1,3 +1,5 @@
 node_modules/
 .vite/
 .atl/
+# Salida accidental de `vite build`. El codigo fuente vive en dist/, no aca.
+dist/dist/
