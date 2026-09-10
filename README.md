@@ -54,6 +54,12 @@ Para verificar que no falte ninguna traducción:
 node qa/i18n-check.mjs
 ```
 
+## Analíticas
+
+Las cuatro páginas cargan el script de Vercel Web Analytics desde el `<head>`, con `defer`. Va en el encabezado y no en el cuerpo porque las páginas de `dist/en/` reemplazan el `<body>` entero al armarse, y se llevarían puesto cualquier script que estuviera ahí.
+
+El script solo existe en los dominios de Vercel: fuera de ahí devuelve 404 y no pasa nada. Para que empiece a registrar visitas hay que habilitar **Web Analytics** en el panel del proyecto, en Analytics; el código por sí solo no alcanza.
+
 ## El minijuego
 
 Al pasar el cursor sobre la escena 3D aparece un botón **Jugar**; en celular queda fijo abajo a la derecha. Lleva a `juego.html`, un sandbox de voxels sobre la misma isla, con el mismo muñequito de la portada.
