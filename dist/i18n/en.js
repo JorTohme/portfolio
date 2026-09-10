@@ -61,7 +61,7 @@ export const EN = {
   'dock.title': 'MY JOURNEY',
   'dock.more': 'TO BE CONTINUED',
   'dock.s1': 'Stage 1, Darwoft',
-  'dock.s2': 'Stage 2, Totalcoin',
+  'dock.s2': 'Stage 2, totalcoin',
   'dock.s3': 'Stage 3, independent development',
 
   'studies.eyebrow': '02 / STILL LEARNING',
@@ -75,7 +75,7 @@ export const EN = {
   'studies.d2detail': 'Security · Infrastructure · DevSecOps · QA · Pentesting · IoT',
   'studies.d2type': 'BACHELOR\'S',
   'studies.extraLabel': 'TRAINING',
-  'studies.extraBody': '.NET at Totalcoin <span>2023</span> / AWS Fundamentals at Darwoft <span>2025</span>',
+  'studies.extraBody': '.NET at totalcoin <span>2023</span> / AWS Fundamentals at Darwoft <span>2025</span>',
 
   'learning.eyebrow': '03 / WHAT I TAKE WITH ME',
   'learning.title': 'I do not just<br>collect <em>technologies.</em>',
