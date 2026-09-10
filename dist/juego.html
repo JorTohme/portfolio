@@ -54,6 +54,10 @@
     }
     @media(max-width:370px){.slot{width:33px;height:33px}.slot i{width:19px;height:19px}}
   </style>
+  <!-- Vercel Web Analytics. Va en head porque los shells de /en/ reemplazan
+       el body entero y se llevarian puesto un script puesto ahi. -->
+  <script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments)};</script>
+  <script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
   <canvas id="world"></canvas>
