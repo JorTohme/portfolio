@@ -76,7 +76,7 @@ Corre sin navegador y sin dependencias. Verifica el recorrido de rayos, la oclus
 
 `vercel.json` le dice a Vercel exactamente eso: framework `null`, comando de build vacío y carpeta a publicar `dist`. Sin ese archivo, Vercel detecta Vite en el `package.json` e inventa un build que este proyecto no tiene.
 
-**No corras `vite build`.** Vite tomaría solo `index.html` como entrada y dejaría afuera `juego.html` y las dos páginas de `dist/en/`, así que produciría un sitio incompleto. Además falla, porque trata cualquier `<link href>` como si fuera un archivo y las etiquetas `canonical` y `alternate` apuntan a directorios.
+**No corras `vite build`.** No da error, pero tomaría solo `index.html` como entrada y dejaría afuera `juego.html` y las dos páginas de `dist/en/`, así que produciría un sitio incompleto. Su salida cae en `dist/dist/`, que está ignorada.
 
 El scroll es nativo. La cámara orbita, cambia de altura y acerca la escena; los fondos acompañan el recorrido con un movimiento suave. En celular se muestra la escena dentro de cada capítulo. El control de pausa y la preferencia del sistema de reducir movimiento detienen las animaciones.
 
