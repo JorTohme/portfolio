@@ -25,7 +25,32 @@ Usá el servidor local: abrir `index.html` con doble clic puede bloquear los mó
 | `dist/main.js` | Mundo voxel, recorrido de cámara, etapas e interacciones |
 | `dist/assets/` | Fondos voxel WebP; versiones grandes y livianas para celular |
 | `dist/voxel-renderer.js` | Renderizado alternativo cuando WebGL no está disponible |
+| `dist/voxel-models.js` | Paleta y modelos compartidos por la portada y el juego: el muñequito y el árbol |
+| `dist/juego.html` | Página del minijuego: interfaz, paleta de bloques y estilos propios |
+| `dist/game/grid.js` | Grilla de voxels, recorrido de rayos y códecs de guardado y compartir |
+| `dist/game/island.js` | La isla dibujada sobre la grilla: terreno, camino, casa, grúa y árboles |
+| `dist/game/world.js` | Dibujado de la grilla con `InstancedMesh`, un mesh por color |
+| `dist/game/player.js` | Física del muñequito: gravedad, colisiones y escalón automático |
+| `dist/game/game.js` | Escena, cámara, controles, interfaz y los extras del juego |
 | `dist/three.module.js` | Three.js r170, dependencia incluida con licencia MIT |
+
+## El minijuego
+
+Al pasar el cursor sobre la escena 3D aparece un botón **Jugar**; en celular queda fijo abajo a la derecha. Lleva a `juego.html`, un sandbox de voxels sobre la misma isla, con el mismo muñequito de la portada.
+
+La isla del juego está redibujada sobre una grilla uniforme de celdas de 0,72 unidades, el mismo paso que usa la portada. La escena de `main.js` no sirve para esto: sus bloques tienen tamaños distintos entre sí porque es una composición hecha a mano, no una grilla.
+
+En computadora se camina con WASD, se salta con espacio, se pone un bloque con click y se saca con click derecho. En celular se toca el piso para caminar hasta ahí y el botón 🚶 / ⛏ cambia entre caminar y construir. Arrastrar gira la cámara; la rueda o el pellizco acercan.
+
+Lo que construís se guarda solo en el navegador. **Compartir** copia un link que lleva tu isla comprimida adentro, **Descargar imagen** baja una captura y **Volver al original** borra todo y reconstruye la isla inicial.
+
+## Revisar la lógica del juego
+
+```sh
+node qa/selftest.mjs
+```
+
+Corre sin navegador y sin dependencias. Verifica el recorrido de rayos, la oclusión de caras, los códecs de guardado y compartir, la física del muñequito y que la isla sea jugable.
 
 **En este proyecto `dist/` contiene el código fuente editable, no una carpeta descartable generada por un build. No la borres.** No hace falta compilar.
 

@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#174c38">
+  <title>Jorge Tohmé — La isla</title>
+  <meta name="description" content="Un sandbox de voxels sobre la isla del portafolio: caminá, sacá bloques y construí lo que quieras.">
+  <meta name="robots" content="index,follow">
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css">
+  <style>
+    html{scroll-behavior:auto}
+    body{overflow:hidden;height:100svh;touch-action:none;overscroll-behavior:none}
+    #world{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:crosshair}
+    .panel{background:#103c2de8;border:1px solid #edf5d740;border-radius:4px;box-shadow:4px 4px 0 #0a3023;backdrop-filter:blur(12px)}
+    .game-top{position:fixed;z-index:5;top:0;left:0;right:0;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+    .game-back{display:flex;align-items:center;gap:10px;padding:11px 16px;min-height:44px;font-family:var(--mono);font-size:.8125rem;letter-spacing:.025em}
+    .game-actions{display:flex;gap:8px;flex-wrap:wrap}
+    .game-actions button{padding:11px 14px;min-height:44px;font-family:var(--mono);font-size:.75rem;letter-spacing:.025em;background:#103c2de8;border:1px solid #edf5d740;border-radius:4px;box-shadow:4px 4px 0 #0a3023}
+    .game-back:hover,.game-actions button:hover{transform:translate(2px,2px);box-shadow:2px 2px 0 #0a3023}
+    .hint{position:fixed;z-index:4;left:18px;bottom:104px;width:max-content;max-width:330px;padding:13px 15px;font-family:var(--mono);font-size:.75rem;line-height:1.75;transition:opacity .5s}
+    .hint b{color:var(--orange);font-weight:500}
+    .hint.gone{opacity:0;pointer-events:none}
+    .hotbar{position:fixed;z-index:5;left:50%;transform:translateX(-50%);bottom:max(18px,env(safe-area-inset-bottom));display:flex;gap:6px;padding:8px}
+    .slot{width:44px;height:44px;border:2px solid transparent;border-radius:4px;padding:0;display:grid;place-items:center;position:relative;background:#0a302366}
+    .slot i{display:block;width:26px;height:26px;border-radius:3px;box-shadow:inset -6px -6px 0 #0003}
+    .slot.on{border-color:var(--orange)}
+    .slot span{position:absolute;top:1px;left:4px;font-family:var(--mono);font-size:.5rem;opacity:.6}
+    .slot-erase i{background:none;box-shadow:none;font-size:20px;line-height:26px;text-align:center}
+    .mode{position:fixed;z-index:5;right:max(14px,env(safe-area-inset-right));bottom:max(78px,calc(env(safe-area-inset-bottom) + 78px));width:52px;height:52px;font-size:22px;display:none;place-items:center;padding:0}
+    .toast{position:fixed;z-index:8;left:50%;transform:translateX(-50%);top:78px;padding:12px 18px;font-family:var(--mono);font-size:.8125rem;opacity:0;pointer-events:none;transition:opacity .3s}
+    .toast.on{opacity:1}
+    .fallback{position:fixed;z-index:9;inset:0;display:grid;place-items:center;padding:24px;background:var(--blue)}
+    /* A class selector beats the user-agent [hidden] rule, so say it explicitly. */
+    .fallback[hidden]{display:none}
+    .fallback>div{max-width:420px;padding:26px;text-align:center}
+    .fallback h1{font-family:var(--font);font-size:1.6rem;margin-bottom:14px;letter-spacing:-.04em}
+    .fallback p{font-size:.95rem;line-height:1.7;opacity:.8;margin-bottom:22px}
+    .fallback a{display:inline-block;padding:12px 18px;background:var(--orange);color:#103c2d;border-radius:4px;font-family:var(--mono);font-size:.8125rem}
+    @media(max-width:900px){
+      .game-top{padding:10px 12px;gap:8px}
+      .game-back{padding:10px 12px;font-size:.75rem}
+      .game-actions button{padding:10px 11px;font-size:.6875rem}
+      .hint{left:12px;right:12px;max-width:none;bottom:150px;font-size:.6875rem;line-height:1.65}
+      .mode{display:grid}
+      .hotbar{gap:4px;padding:6px;max-width:calc(100vw - 84px)}
+      .slot{width:38px;height:38px}.slot i{width:22px;height:22px}
+    }
+    @media(max-width:370px){.slot{width:33px;height:33px}.slot i{width:19px;height:19px}}
+  </style>
+</head>
+<body>
+  <canvas id="world"></canvas>
+
+  <header class="game-top">
+    <a class="game-back panel" href="./index.html"><span aria-hidden="true">←</span> Volver al recorrido</a>
+    <div class="game-actions">
+      <button id="share" type="button">Compartir</button>
+      <button id="png" type="button">Descargar imagen</button>
+      <button id="reset" type="button">Volver al original</button>
+    </div>
+  </header>
+
+  <p class="hint panel" id="hint">
+    <b>WASD</b> caminar · <b>espacio</b> saltar<br>
+    <b>Click</b> poner · <b>click derecho</b> sacar<br>
+    <b>Arrastrá</b> girar · <b>rueda</b> acercar<br>
+    <b>1–9</b> elegir bloque
+  </p>
+
+  <div class="hotbar panel" id="hotbar" role="toolbar" aria-label="Bloques"></div>
+  <button class="mode panel" id="mode" type="button" aria-label="Cambiar entre caminar y construir">🚶</button>
+  <div class="toast panel" id="toast" role="status" aria-live="polite"></div>
+
+  <div class="fallback" id="fallback" hidden>
+    <div class="panel">
+      <h1>Acá no puedo abrir la isla</h1>
+      <p>Este navegador no tiene WebGL disponible, y el mundo 3D lo necesita para dibujarse. Probá en otro navegador o en otra máquina.</p>
+      <a href="./index.html">Volver al recorrido</a>
+    </div>
+  </div>
+
+  <script type="module" src="./game/game.js"></script>
+</body>
+</html>

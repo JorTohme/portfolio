@@ -5,6 +5,10 @@ export const SX=32,SY=20,SZ=32;
 // Cell pitch matches the home island's 0.72 spacing, so the shared character and
 // tree models drop into the world at native scale with no fudge factor.
 export const CELL=.72;
+// Grid values are 1-based indices into this list; 0 is air. Names match the
+// palette keys in voxel-models.js, so a cell maps straight to a material.
+export const BLOCKS=['grass','grassLight','soil','soilDark','soilLight','wood','bark','leaves','leavesLight','leavesDark','lime','cream','stone','yellow','orange','ink'];
+export const B=Object.fromEntries(BLOCKS.map((k,i)=>[k,i+1]));
 export const idx=(x,y,z)=>(y*SZ+z)*SX+x;
 export const inBounds=(x,y,z)=>x>=0&&x<SX&&y>=0&&y<SY&&z>=0&&z<SZ;
 export const createGrid=()=>new Uint8Array(SX*SY*SZ);
@@ -44,16 +48,15 @@ export function raycast(g,origin,dir,maxDist=64){
   }
 }
 
-// Run-length pairs of [value, count] capped at 255, then base64url — short enough
-// for a share link on a normal build, and no dependency on CompressionStream.
-export function encode(g){
+// Run-length pairs of [value, count] capped at 255. Synchronous, which is what
+// local saving and the first paint want.
+function rle(g){
   const out=[];let v=g[0],n=0;
   for(let i=0;i<g.length;i++){if(g[i]===v&&n<255)n++;else{out.push(v,n);v=g[i];n=1;}}
   out.push(v,n);
-  return toBase64Url(Uint8Array.from(out));
+  return Uint8Array.from(out);
 }
-export function decode(s){
-  const bytes=fromBase64Url(s);
+function unrle(bytes){
   if(!bytes||!bytes.length||bytes.length%2)return null;
   const g=createGrid();let i=0;
   for(let p=0;p<bytes.length;p+=2){
@@ -63,6 +66,31 @@ export function decode(s){
     i+=n;
   }
   return i===g.length?g:null;
+}
+export const encode=g=>toBase64Url(rle(g));
+export const decode=s=>unrle(fromBase64Url(s));
+
+// A share link also runs the runs through deflate — native in every current
+// browser — which takes the untouched island from ~1800 chars down to ~600.
+// The leading marker says which form the payload is in.
+const zip=(u8,Stream)=>{
+  const s=new Stream('deflate-raw'),w=s.writable.getWriter();
+  w.write(u8);w.close();
+  return new Response(s.readable).arrayBuffer().then(b=>new Uint8Array(b));
+};
+export async function pack(g){
+  const runs=rle(g);
+  if(typeof CompressionStream==='undefined')return 'r'+toBase64Url(runs);
+  try{return 'z'+toBase64Url(await zip(runs,CompressionStream));}
+  catch{return 'r'+toBase64Url(runs);}
+}
+export async function unpack(s){
+  if(typeof s!=='string'||s.length<2)return null;
+  const body=fromBase64Url(s.slice(1));
+  if(!body)return null;
+  if(s[0]==='r')return unrle(body);
+  if(s[0]!=='z'||typeof DecompressionStream==='undefined')return null;
+  try{return unrle(await zip(body,DecompressionStream));}catch{return null;}
 }
 function toBase64Url(bytes){
   let s='';for(let i=0;i<bytes.length;i+=8192)s+=String.fromCharCode(...bytes.subarray(i,i+8192));
