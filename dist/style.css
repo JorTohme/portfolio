@@ -95,3 +95,21 @@ main{z-index:2}
  .mobile-scene-slot{background:radial-gradient(ellipse,#174c3860 10%,transparent 70%)}
 }
 @media(prefers-reduced-motion:reduce){.scenery{transform:none;will-change:auto}.chapter-content{rotate:none}}
+
+/* Play CTA. The scene canvas is pointer-transparent and sits under the text
+   layer, so main.js toggles .scene-hot from a rect test instead of :hover. */
+.game-cta{position:fixed;z-index:7;top:27%;right:20%;display:flex;align-items:center;gap:10px;padding:12px 20px;min-height:48px;font-family:var(--mono);font-size:.875rem;letter-spacing:.025em;background:var(--orange);color:#103c2d;border-radius:4px;box-shadow:4px 4px 0 #0a3023;transition:opacity .3s,transform .3s,box-shadow .3s}
+.game-cta span{font-size:1rem}
+.game-cta:hover,.game-cta:focus-visible{transform:translate(2px,2px);box-shadow:2px 2px 0 #0a3023}
+.webgl-unavailable .game-cta{display:none}
+@media(min-width:901px){
+ .game-cta{opacity:0;transform:translateY(6px);pointer-events:none}
+ .scene-hot .game-cta,.game-cta:focus-visible{opacity:1;pointer-events:auto}
+ .scene-hot .game-cta{transform:none}
+ .scene-hot .game-cta:hover,.game-cta:focus-visible{transform:translate(2px,2px)}
+ .scene-off .game-cta{opacity:0;pointer-events:none}
+}
+@media(max-width:900px){
+ .game-cta{top:auto;bottom:max(19px,env(safe-area-inset-bottom));right:70px;padding:10px 16px;min-height:44px;font-size:.8125rem}
+}
+@media(max-width:370px){.game-cta{right:64px;padding:9px 13px}}

@@ -1,5 +1,6 @@
 import * as THREE from './three.module.js';
 import { VoxelRenderer } from './voxel-renderer.js';
+import { BOX, createMaterials, buildCharacter, buildTree } from './voxel-models.js';
 const reduced=matchMedia('(prefers-reduced-motion: reduce)'),small=matchMedia('(max-width:900px)');
 let paused=reduced.matches,exploded=false,stage=0,routeProgress=0,scenePass=.5;
 const motionButton=document.querySelector('#motion'),explodeButton=document.querySelector('#explode'),sceneWrap=document.querySelector('.scene-wrap'),dock=document.querySelector('.journey-dock'),chapters=[...document.querySelectorAll('.chapter')],sceneSections=[...document.querySelectorAll('[data-scene]')],progress=document.querySelector('.scroll-progress');
@@ -27,8 +28,12 @@ function measure(){positions=sceneSections.map(el=>({top:el.getBoundingClientRec
 function onScroll(){const y=scrollY+innerHeight*.35;stage=0;for(const p of positions)if(y>=p.top)stage=p.stage;
 const index=Math.max(0,positions.findLastIndex(p=>y>=p.top)),from=positions[index],to=positions[index+1];
 routeProgress=from?(to?from.stage+THREE.MathUtils.clamp((y-from.top)/Math.max(1,to.top-from.top),0,1)*(to.stage-from.stage):from.stage):0;
-progress.style.transform='scaleX('+scrollY/Math.max(1,document.documentElement.scrollHeight-innerHeight)+')';const show=stage>=1&&stage<=3;dock.classList.toggle('show',show);dock.inert=!show;dock.querySelectorAll('a').forEach((a,i)=>{a.classList.toggle('active',stage===i+1);if(stage===i+1)a.setAttribute('aria-current','step');else a.removeAttribute('aria-current');});sceneWrap.style.opacity=stage===4||stage===5?'0':'1';mountScene();updateDepth();}
+progress.style.transform='scaleX('+scrollY/Math.max(1,document.documentElement.scrollHeight-innerHeight)+')';const show=stage>=1&&stage<=3;dock.classList.toggle('show',show);dock.inert=!show;dock.querySelectorAll('a').forEach((a,i)=>{a.classList.toggle('active',stage===i+1);if(stage===i+1)a.setAttribute('aria-current','step');else a.removeAttribute('aria-current');});const hidden=stage===4||stage===5;sceneWrap.style.opacity=hidden?'0':'1';document.body.classList.toggle('scene-off',hidden);mountScene();updateDepth();}
 addEventListener('scroll',onScroll,{passive:true});addEventListener('resize',()=>{measure();onScroll();},{passive:true});document.querySelectorAll('details').forEach(el=>el.addEventListener('toggle',measure));document.fonts.ready.then(()=>{measure();onScroll();});measure();onScroll();
+// The scene canvas is pointer-transparent and sits under the text layer, so the
+// play CTA is revealed by a rect test rather than a CSS :hover on the scene.
+addEventListener('pointermove',e=>{if(small.matches||e.pointerType!=='mouse')return;const r=sceneWrap.getBoundingClientRect();document.body.classList.toggle('scene-hot',e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom);},{passive:true});
+addEventListener('pointerleave',()=>document.body.classList.remove('scene-hot'));
 if(!reduced.matches&&'IntersectionObserver'in window){const observer=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');observer.unobserve(e.target);}}),{threshold:.08});document.querySelectorAll('.chapter-content,.learning-list>div,.study-row,.journey-intro').forEach(el=>{el.classList.add('reveal');observer.observe(el);});}
 try{createWorld();}catch(error){document.body.classList.add('webgl-unavailable');console.warn('La escena 3D no está disponible.',error);}
 function createWorld(){
@@ -40,9 +45,8 @@ const scene=new THREE.Scene(),camera=new THREE.OrthographicCamera(-5,5,5,-5,.1,8
 scene.add(new THREE.HemisphereLight(0xf3ffe1,0x235536,2.4));
 const sun=new THREE.DirectionalLight(0xffe8b3,3.3);sun.position.set(-4,10,6);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);Object.assign(sun.shadow.camera,{left:-7,right:7,top:7,bottom:-7,near:.5,far:30});sun.shadow.normalBias=.025;scene.add(sun);
 const fill=new THREE.DirectionalLight(0xb9edc1,1.6);fill.position.set(5,3,-5);scene.add(fill);
-const island=new THREE.Group();scene.add(island);const geo=new THREE.BoxGeometry(1,1,1);
-const colors={grass:0x79aa4a,grassLight:0x9bc960,soil:0x99704b,soilDark:0x735039,soilLight:0xb98c62,wood:0xa07343,bark:0x654831,leaves:0x478741,leavesLight:0x78ad4c,leavesDark:0x2c6739,lime:0xc1d879,cream:0xf5e8b5,stone:0xc7c8ad,yellow:0xf4c45e,orange:0xd88948,ink:0x253d32};
-const mats=Object.fromEntries(Object.entries(colors).map(([k,v])=>[k,new THREE.MeshStandardMaterial({color:v,roughness:1,flatShading:true})])),pieces=[];
+const island=new THREE.Group();scene.add(island);const geo=BOX;
+const mats=createMaterials(),pieces=[];
 function block(parent,x,y,z,sx,sy,sz,color,level=0,scatter=false){const mesh=new THREE.Mesh(geo,mats[color]);mesh.position.set(x,y,z);mesh.scale.set(sx,sy,sz);mesh.castShadow=true;mesh.receiveShadow=true;parent.add(mesh);if(level||scatter)pieces.push({mesh,home:mesh.position.clone(),size:mesh.scale.clone(),level,index:pieces.length});return mesh;}
 // Irregular layers of grass, exposed earth and a stone path.
 for(let x=-3;x<=3;x++)for(let z=-3;z<=3;z++){if(Math.abs(x)===3&&Math.abs(z)===3)continue;const h=((x*7+z*3+53)%5)*.025;block(island,x*.72,-1.15+h,z*.72,.72,.24,.72,(x+z+9)%3===0?'grassLight':'grass');block(island,x*.72,-1.65,z*.72,.72,.77,.72,(x*3+z+14)%3===0?'soilDark':'soil');if((x+z+10)%3===0)block(island,x*.72,-2.1,z*.72,.7,.25,.7,'soilLight');}
@@ -55,16 +59,13 @@ block(island,-.02,.65,-.65,1.55,.3,.53,'cream',3,true);block(island,-.55,-.1,.35
 block(island,1.55,.4,-1.3,.23,2.85,.23,'yellow',2,true);block(island,.68,1.82,-1.3,2.5,.2,.22,'yellow',2,true);block(island,1.88,1.68,-1.3,.6,.43,.43,'ink',2,true);
 for(let j=0;j<6;j++)block(island,1.55,-.7+j*.43,-1.3,.44,.07,.34,'orange',2,true);
 block(island,-.42,1.17,-1.3,.04,1.16,.04,'ink',2,true);block(island,-.42,.57,-1.3,.53,.53,.53,'cream',2,true);
-function tree(x,z,s=1){const g=new THREE.Group();g.position.set(x,-1,z);g.scale.setScalar(s);island.add(g);block(g,0,.65,0,.27,1.3,.27,'bark');block(g,0,1.45,0,1.08,.75,.98,'leaves');block(g,-.32,1.65,.14,.67,.68,.64,'leavesLight');block(g,.33,1.5,-.15,.66,.72,.77,'leavesDark');block(g,0,2,0,.66,.45,.68,'leavesLight');return g;}
+function tree(x,z,s=1){const g=buildTree(mats);g.position.set(x,-1,z);g.scale.setScalar(s);island.add(g);return g;}
 const trees=[tree(-1.65,-1.18,1.08),tree(-2.03,.17,.7),tree(1.75,1.2,.62)];
 function sprout(x,z){block(island,x,-.8,z,.065,.35,.065,'leavesDark');block(island,x-.12,-.68,z,.26,.09,.14,'lime');block(island,x+.1,-.59,z,.22,.09,.14,'grassLight');}
 [[-1.8,1.45],[-1.4,1.1],[2,-.1],[.4,2],[-.4,-1.8],[-2.1,-.5]].forEach(([x,z])=>sprout(x,z));
 [[-1.9,1.85],[1.95,.55],[-1.35,-1.7]].forEach(([x,z])=>{block(island,x,-.81,z,.065,.35,.065,'leaves');block(island,x,-.59,z,.24,.17,.24,'yellow');block(island,x,-.5,z,.09,.04,.09,'orange');});
-// Friendly voxel builder, with overalls and a waving arm.
-const builder=new THREE.Group();builder.position.set(.55,-1.02,1.43);builder.rotation.y=.15;island.add(builder);
-block(builder,-.14,.12,0,.19,.24,.25,'ink');block(builder,.14,.12,0,.19,.24,.25,'ink');block(builder,0,.41,0,.48,.43,.29,'orange');block(builder,0,.39,.17,.29,.3,.07,'leavesDark');block(builder,0,.84,0,.49,.43,.43,'cream');
-block(builder,-.11,.86,.224,.058,.068,.022,'ink');block(builder,.11,.86,.224,.058,.068,.022,'ink');block(builder,0,.73,.224,.1,.027,.022,'ink');block(builder,0,1.07,0,.58,.11,.53,'yellow');block(builder,0,1.18,0,.41,.17,.4,'yellow');block(builder,-.33,.5,0,.16,.34,.19,'cream');
-const arm=new THREE.Group();arm.position.set(.32,.61,0);builder.add(arm);block(arm,0,-.09,0,.17,.34,.2,'cream');
+// The builder stands beside the stone path; the arm keeps waving.
+const {group:builder,arm}=buildCharacter(mats);builder.position.set(.55,-1.02,1.43);builder.rotation.y=.15;island.add(builder);
 for(let i=0;i<2;i++){block(island,1.3+i*.44,-.81,.45,.38,.36,.36,'wood',1,true);block(island,1.3+i*.44,-.81,.64,.29,.06,.03,'cream',1,true);block(island,-1.1+i*.72,-.68,1.98,.1,.64,.1,'wood');}
 for(let i=0;i<5;i++)block(island,-1.1+i*.18,-.49,1.99,.18,.2,.12,i%2?'ink':'yellow');
 const motes=[];for(let i=0;i<8;i++){const m=block(island,Math.sin(i*2.4)*3,Math.cos(i*1.3)*1.4+.3,Math.cos(i*2.4)*2.6,.065,.065,.065,'lime');motes.push({mesh:m,y:m.position.y});}
