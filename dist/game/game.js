@@ -8,6 +8,8 @@ import { PALETTE, buildCharacter } from '../voxel-models.js';
 const canvas = document.querySelector('#world');
 const small = matchMedia('(max-width:900px)');
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+// The English page hands us its dictionary on the global; the Spanish page has none.
+const t = (key, fallback) => globalThis.__I18N?.[key] ?? fallback;
 
 let renderer;
 try { renderer = new THREE.WebGLRenderer({ canvas, antialias: true }); }
@@ -48,8 +50,8 @@ function start() {
   // so the swap costs nothing visible.
   const shared = decodeURIComponent(location.hash.slice(1));
   if (shared) unpack(shared).then(g => {
-    if (!g) return toast('Ese link no se pudo abrir');
-    world.load(g); player.reset(); toast('Isla compartida cargada');
+    if (!g) return toast(t('game.badLink', 'Ese link no se pudo abrir'));
+    world.load(g); player.reset(); toast(t('game.loaded', 'Isla compartida cargada'));
   });
 
   // A translucent cube marking the cell the pointer is over.
@@ -87,13 +89,13 @@ function start() {
   HOTBAR.forEach((key, i) => {
     const b = document.createElement('button');
     b.type = 'button'; b.className = 'slot'; b.dataset.value = B[key];
-    b.setAttribute('aria-label', `Bloque ${i + 1}`);
+    b.setAttribute('aria-label', `${t('game.block', 'Bloque')} ${i + 1}`);
     b.innerHTML = `<span>${i + 1}</span><i style="background:#${PALETTE[key].toString(16).padStart(6, '0')}"></i>`;
     bar.append(b);
   });
   const eraser = document.createElement('button');
   eraser.type = 'button'; eraser.className = 'slot slot-erase'; eraser.dataset.value = '0';
-  eraser.setAttribute('aria-label', 'Borrar bloques');
+  eraser.setAttribute('aria-label', t('game.eraser', 'Borrar bloques'));
   eraser.innerHTML = `<span>9</span><i aria-hidden="true">⌫</i>`;
   bar.append(eraser);
   const slots = [...bar.children];
@@ -113,11 +115,11 @@ function start() {
   modeButton.addEventListener('click', () => {
     walkMode = !walkMode;
     modeButton.textContent = walkMode ? '🚶' : '⛏';
-    modeButton.setAttribute('aria-label', walkMode ? 'Modo caminar activo' : 'Modo construir activo');
+    modeButton.setAttribute('aria-label', walkMode ? t('game.modeWalk', 'Modo caminar activo') : t('game.modeBuild', 'Modo construir activo'));
     hideHint();
   });
-  if (small.matches) document.querySelector('#hint').innerHTML =
-    `<b>Tocá el piso</b> para caminar hasta ahí<br><b>Arrastrá</b> para girar la cámara · <b>pellizcá</b> para acercar<br>Con <b>⛏</b> tocás un bloque para ponerlo o sacarlo`;
+  if (small.matches) document.querySelector('#hint').innerHTML = t('game.hintTouch',
+    '<b>Tocá el piso</b> para caminar hasta ahí<br><b>Arrastrá</b> para girar la cámara · <b>pellizcá</b> para acercar<br>Con <b>⛏</b> tocás un bloque para ponerlo o sacarlo');
 
   // ---- input ----------------------------------------------------------------
   const keys = new Set();
@@ -185,7 +187,7 @@ function start() {
     if (small.matches && walkMode) { walkTarget = { x: (hit.x + .5) * CELL, z: (hit.z + .5) * CELL }; return; }
     if (button === 2 || selected === 0) { world.set(hit.x, hit.y, hit.z, 0); scheduleSave(); return; }
     const nx = hit.x + hit.nx, ny = hit.y + hit.ny, nz = hit.z + hit.nz;
-    if (cellOverlapsBox(nx, ny, nz, player.pos)) { toast('Ahí estás parado vos'); return; }
+    if (cellOverlapsBox(nx, ny, nz, player.pos)) { toast(t('game.onYou', 'Ahí estás parado vos')); return; }
     if (world.set(nx, ny, nz, selected)) scheduleSave();
   }
 
@@ -198,24 +200,24 @@ function start() {
   }
   document.querySelector('#share').addEventListener('click', async () => {
     const payload = await pack(world.grid);
-    if (payload.length > 4000) return toast('Tu isla quedó muy grande para un link');
+    if (payload.length > 4000) return toast(t('game.tooBig', 'Tu isla quedó muy grande para un link'));
     const url = location.origin + location.pathname + '#' + payload;
-    try { await navigator.clipboard.writeText(url); toast('Link copiado'); }
-    catch { location.hash = payload; toast('Link listo en la barra de direcciones'); }
+    try { await navigator.clipboard.writeText(url); toast(t('game.copied', 'Link copiado')); }
+    catch { location.hash = payload; toast(t('game.inBar', 'Link listo en la barra de direcciones')); }
   });
   document.querySelector('#png').addEventListener('click', () => {
     // Render and read back in the same task, so preserveDrawingBuffer stays off.
     renderer.render(scene, camera);
     const a = document.createElement('a');
     a.href = renderer.domElement.toDataURL('image/png');
-    a.download = 'mi-isla.png'; a.click();
-    toast('Imagen descargada');
+    a.download = t('game.file', 'mi-isla.png'); a.click();
+    toast(t('game.saved', 'Imagen descargada'));
   });
   document.querySelector('#reset').addEventListener('click', () => {
     world.load(buildIsland()); player.reset(); walkTarget = null;
     try { localStorage.removeItem(KEY); } catch { }
     history.replaceState(null, '', location.pathname);
-    toast('Isla original restaurada');
+    toast(t('game.restored', 'Isla original restaurada'));
   });
 
   // ---- day and night --------------------------------------------------------

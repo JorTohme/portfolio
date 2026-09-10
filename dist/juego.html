@@ -55,30 +55,30 @@
   <canvas id="world"></canvas>
 
   <header class="game-top">
-    <a class="game-back panel" href="./index.html"><span aria-hidden="true">←</span> Volver al recorrido</a>
-    <div class="game-actions">
-      <button id="share" type="button">Compartir</button>
-      <button id="png" type="button">Descargar imagen</button>
-      <button id="reset" type="button">Volver al original</button>
+    <a class="game-back panel" href="./index.html" data-i18n="game.back"><span aria-hidden="true">←</span> Volver al recorrido</a>
+    <div class="game-actions"><a class="lang-switch panel" href="./en/juego.html" hreflang="en" aria-label="Ver este sitio en inglés" data-i18n="lang.label" data-i18n-attr="href@lang.hrefGame;aria-label@lang.aria;hreflang@lang.code">EN</a>
+      <button id="share" type="button" data-i18n="game.share">Compartir</button>
+      <button id="png" type="button" data-i18n="game.png">Descargar imagen</button>
+      <button id="reset" type="button" data-i18n="game.reset">Volver al original</button>
     </div>
   </header>
 
-  <p class="hint panel" id="hint">
+  <p class="hint panel" id="hint" data-i18n="game.hint">
     <b>WASD</b> caminar · <b>espacio</b> saltar<br>
     <b>Click</b> poner · <b>click derecho</b> sacar<br>
     <b>Arrastrá</b> girar · <b>rueda</b> acercar<br>
     <b>1–9</b> elegir bloque
   </p>
 
-  <div class="hotbar panel" id="hotbar" role="toolbar" aria-label="Bloques"></div>
-  <button class="mode panel" id="mode" type="button" aria-label="Cambiar entre caminar y construir">🚶</button>
+  <div class="hotbar panel" id="hotbar" role="toolbar" aria-label="Bloques" data-i18n-attr="aria-label@game.hotbarLabel"></div>
+  <button class="mode panel" id="mode" type="button" aria-label="Cambiar entre caminar y construir" data-i18n-attr="aria-label@game.modeLabel">🚶</button>
   <div class="toast panel" id="toast" role="status" aria-live="polite"></div>
 
   <div class="fallback" id="fallback" hidden>
     <div class="panel">
-      <h1>Acá no puedo abrir la isla</h1>
-      <p>Este navegador no tiene WebGL disponible, y el mundo 3D lo necesita para dibujarse. Probá en otro navegador o en otra máquina.</p>
-      <a href="./index.html">Volver al recorrido</a>
+      <h1 data-i18n="game.fbTitle">Acá no puedo abrir la isla</h1>
+      <p data-i18n="game.fbBody">Este navegador no tiene WebGL disponible, y el mundo 3D lo necesita para dibujarse. Probá en otro navegador o en otra máquina.</p>
+      <a href="./index.html" data-i18n="game.fbLink">Volver al recorrido</a>
     </div>
   </div>
 

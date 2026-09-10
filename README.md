@@ -33,6 +33,26 @@ Usá el servidor local: abrir `index.html` con doble clic puede bloquear los mó
 | `dist/game/player.js` | Física del muñequito: gravedad, colisiones y escalón automático |
 | `dist/game/game.js` | Escena, cámara, controles, interfaz y los extras del juego |
 | `dist/three.module.js` | Three.js r170, dependencia incluida con licencia MIT |
+| `dist/i18n.js` | Motor de traducción: reemplaza textos y atributos según el diccionario |
+| `dist/i18n/en.js` | Toda la copia en inglés, una clave por elemento |
+| `dist/en/index.html` | Portada en inglés |
+| `dist/en/juego.html` | Juego en inglés |
+
+## Los dos idiomas
+
+El español es la única versión que se escribe a mano. Cada elemento traducible lleva un `data-i18n` y el diccionario guarda su HTML, así un título como `Nada aparece<br>de la nada.` es una sola clave y el inglés puede cortar la línea donde le quede mejor. Los atributos viajan en `data-i18n-attr`, con la forma `atributo@clave`.
+
+Las páginas de `dist/en/` no duplican el markup: bajan el HTML español, lo traducen en un documento aparte y recién entonces lo insertan, de modo que nunca se pinta una palabra en español antes del cambio.
+
+**Para cambiar un texto**: editalo en `dist/index.html` y actualizá su clave en `dist/i18n/en.js`. Si te olvidás del inglés, esa parte queda en español y la consola del navegador avisa cuántas claves faltan.
+
+Los pocos textos que viven en JavaScript usan el mismo diccionario a través de una global que solo existe en las páginas en inglés, con el español como valor por omisión.
+
+Para verificar que no falte ninguna traducción:
+
+```sh
+node qa/i18n-check.mjs
+```
 
 ## El minijuego
 

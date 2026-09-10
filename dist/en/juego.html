@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#174c38">
+  <title>Jorge Tohmé — The island</title>
+  <meta name="description" content="A voxel sandbox on the island from the portfolio: walk around, take blocks out, and build whatever you like.">
+  <meta name="robots" content="index,follow">
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="canonical" href="/en/juego.html">
+  <link rel="alternate" hreflang="es" href="/juego.html">
+  <link rel="alternate" hreflang="en" href="/en/juego.html">
+  <link rel="alternate" hreflang="x-default" href="/juego.html">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../style.css">
+  <link rel="preload" href="../juego.html" as="fetch" crossorigin>
+</head>
+<body>
+  <noscript><p style="padding:2rem;font-family:system-ui">This page builds itself from the Spanish version with JavaScript. <a href="../juego.html" style="text-decoration:underline">Open the game in Spanish</a>.</p></noscript>
+  <script type="module">
+    // Same shell as /en/index.html. The game page keeps its styles inline, so
+    // they are carried over from the source instead of being duplicated here.
+    import { apply } from '../i18n.js';
+    import { EN } from '../i18n/en.js';
+
+    const source = await fetch('../juego.html').then(r => r.text());
+    const doc = new DOMParser().parseFromString(source, 'text/html');
+    apply(doc, EN);
+
+    for (const style of doc.head.querySelectorAll('style')) document.head.append(style.cloneNode(true));
+    for (const el of doc.body.querySelectorAll('[src],[srcset]')) {
+      for (const attr of ['src', 'srcset']) {
+        const v = el.getAttribute(attr);
+        if (v && v.startsWith('./')) el.setAttribute(attr, '.' + v);
+      }
+    }
+    doc.querySelectorAll('script').forEach(s => s.remove());
+
+    document.body.innerHTML = doc.body.innerHTML;
+    globalThis.__I18N = EN;
+    await import('../game/game.js');
+  </script>
+</body>
+</html>
