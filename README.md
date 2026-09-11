@@ -37,6 +37,9 @@ Usá el servidor local: abrir `index.html` con doble clic puede bloquear los mó
 | `dist/i18n/en.js` | Toda la copia en inglés, una clave por elemento |
 | `dist/en/index.html` | Portada en inglés |
 | `dist/en/juego.html` | Juego en inglés |
+| `dist/robots.txt` | Permiso de rastreo y dirección del sitemap |
+| `dist/sitemap.xml` | Las cuatro direcciones del sitio, con su par en el otro idioma |
+| `dist/assets/og-cover.jpg` | Imagen de previsualización al compartir el link |
 
 ## Los dos idiomas
 
@@ -59,6 +62,22 @@ node qa/i18n-check.mjs
 Las cuatro páginas cargan el script de Vercel Web Analytics desde el `<head>`, con `defer`. Va en el encabezado y no en el cuerpo porque las páginas de `dist/en/` reemplazan el `<body>` entero al armarse, y se llevarían puesto cualquier script que estuviera ahí.
 
 El script solo existe en los dominios de Vercel: fuera de ahí devuelve 404 y no pasa nada. Para que empiece a registrar visitas hay que habilitar **Web Analytics** en el panel del proyecto, en Analytics; el código por sí solo no alcanza.
+
+## SEO y previsualizaciones
+
+Las cuatro páginas declaran `og:` y `twitter:` en el `<head>`, así compartir el link en LinkedIn o WhatsApp muestra título, descripción e imagen en vez de una dirección pelada. La imagen es `dist/assets/og-cover.jpg`, un recorte de 1200 × 630 del fondo del bosque. **Va en JPG a propósito**: LinkedIn y WhatsApp no leen WebP y dejarían la tarjeta sin imagen. Si cambiás el fondo, regenerá el recorte y mantené esas medidas.
+
+Las dos portadas llevan además un bloque `application/ld+json` con un `Person`, un `WebSite` y un `ProfilePage`. Eso le dice a Google que la página trata sobre una persona, cómo se llama y que el LinkedIn de `sameAs` es la misma persona. El `@id` del `Person` es idéntico en español y en inglés a propósito: así las dos páginas describen una sola entidad y no dos personas distintas. Al editar datos personales, cambialos en los dos archivos.
+
+Si cambian las direcciones del sitio, actualizá `dist/sitemap.xml` y su `lastmod`.
+
+Dos cosas que no son código y pesan más que todo lo anterior: dar de alta el dominio en Google Search Console y enviar el sitemap desde ahí, y que el perfil de LinkedIn enlace a `jorgetohme.com`. Sin eso, Google puede tardar mucho en descubrir el sitio.
+
+## Seguridad
+
+Es un sitio estático: no hay backend, formularios, sesiones ni base de datos, así que no recibe datos de nadie. `vercel.json` agrega cuatro cabeceras de respuesta para todas las rutas: `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy` y `Permissions-Policy`. Evitan que el sitio se incruste en un iframe ajeno, que el navegador adivine tipos de archivo y que se filtre la dirección completa al salir hacia otro dominio. HTTPS y HSTS los pone Vercel solo.
+
+No hay `Content-Security-Policy` a propósito: la página usa scripts en línea y fuentes de Google, así que una política estricta rompería el sitio sin cubrir ningún riesgo real en una página que no procesa entradas.
 
 ## El minijuego
 
