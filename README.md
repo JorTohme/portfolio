@@ -1,4 +1,4 @@
-# Jorge Tohmé — Siempre en construcción
+# Jorge Tohmé — portfolio
 
 Portafolio narrativo en español, con paleta verde, fondos voxel y una isla 3D que se construye mientras recorrés la carrera. HTML, CSS y JavaScript. No requiere backend ni un servicio de esta plataforma para funcionar.
 
