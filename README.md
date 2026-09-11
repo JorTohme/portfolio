@@ -1,4 +1,4 @@
-# Jorge Tohmé — Siempre en construcción
+# Jorge Tohmé — portfolio
 
 Portafolio narrativo en español, con paleta verde, fondos voxel y una isla 3D que se construye mientras recorrés la carrera. HTML, CSS y JavaScript. No requiere backend ni un servicio de esta plataforma para funcionar.
 
@@ -37,6 +37,7 @@ Usá el servidor local: abrir `index.html` con doble clic puede bloquear los mó
 | `dist/i18n/en.js` | Toda la copia en inglés, una clave por elemento |
 | `dist/en/index.html` | Portada en inglés |
 | `dist/en/juego.html` | Juego en inglés |
+| `dist/404.html` | Página de dirección no encontrada, en los dos idiomas |
 | `dist/robots.txt` | Permiso de rastreo y dirección del sitemap |
 | `dist/sitemap.xml` | Las cuatro direcciones del sitio, con su par en el otro idioma |
 | `dist/assets/og-cover.jpg` | Imagen de previsualización al compartir el link |
@@ -72,6 +73,30 @@ Las dos portadas llevan además un bloque `application/ld+json` con un `Person`,
 Si cambian las direcciones del sitio, actualizá `dist/sitemap.xml` y su `lastmod`.
 
 Dos cosas que no son código y pesan más que todo lo anterior: dar de alta el dominio en Google Search Console y enviar el sitemap desde ahí, y que el perfil de LinkedIn enlace a `jorgetohme.com`. Sin eso, Google puede tardar mucho en descubrir el sitio.
+
+## Rendimiento
+
+Tres decisiones sostienen los tiempos de carga y conviene no deshacerlas sin medir.
+
+**La hoja de Google Fonts no bloquea el pintado.** Se pide con `media="print"` y un `onload` que la devuelve a la página, con una copia dentro de `<noscript>`. La URL ya incluye `display=swap`, así que el texto nunca espera a la fuente. Lighthouse medía 600 ms de bloqueo antes de esto.
+
+**`dist/three.module.js` está minificado.** Sin minificar pesaba 1,28 MB y viajaba en 278 KB comprimidos, porque el código con nombres largos y comentarios comprime mal. Minificado son 672 KB en disco y unos 141 KB comprimidos. Si actualizás Three, minificá la versión nueva antes de reemplazarlo; `dist/THREE-LICENSE.txt` tiene que seguir ahí.
+
+**La isla 3D se construye en tiempo ocioso, no durante la carga.** `main.js` importa Three, el renderizador de CPU y los modelos voxel con `import()` dinámico dentro de `createWorld`, y `requestIdleCallback` dispara esa función. Por eso `main.js` define su propio `clamp` de una línea: `THREE.MathUtils.clamp` era lo único que el scroll le pedía a Three, y bastaba para arrastrar toda la librería al arranque. **Si volvés a usar `THREE.` fuera de `createWorld`, la librería vuelve a la ruta crítica** y se pierde la mejora.
+
+Medido con Lighthouse a CPU 12x frenada, sirviendo archivos estáticos, antes y después: LCP de 9,1 s a 5,8 s, FCP de 4,9 s a 3,2 s. El tiempo de bloqueo sube unos 100 ms, porque construir la isla sigue costando lo mismo y ahora ocurre más tarde. El costo que queda es la isla en sí: el siguiente paso, si hiciera falta, es no renderizarla en celulares y dejar solo el fondo voxel.
+
+Los logos de los capítulos se guardan a 128 px, el tamaño en que se ven, y con `loading="lazy"`. Estaban a 400 px y se descargaban siempre.
+
+## La página de error
+
+`dist/404.html` se sirve sola: Vercel toma ese nombre de archivo en la carpeta publicada y lo devuelve, con estado 404, para cualquier dirección que no exista. No necesita configuración en `vercel.json`.
+
+**Todas sus rutas son absolutas (`/style.css`, `/assets/…`) y tienen que seguir siéndolo.** La página se muestra en la dirección que el visitante pidió, sin redirigir, así que `./style.css` se resolvería contra esa ruta inventada y la página aparecería sin estilos.
+
+El idioma sale de la dirección: si empieza con `/en/`, un script al final del cuerpo cambia los textos, el `lang` y los enlaces al inglés. Son cuatro claves en línea, no usa `i18n.js`; si crecen, conviene mudarlas al diccionario.
+
+Lleva `noindex` y no está en el sitemap, porque una página de error indexada compite con las reales. Sí carga las analíticas: saber qué direcciones rotas visita la gente es lo único que vale la pena medir acá.
 
 ## Seguridad
 

@@ -1,6 +1,7 @@
-import * as THREE from './three.module.js';
-import { VoxelRenderer } from './voxel-renderer.js';
-import { BOX, createMaterials, buildCharacter, buildTree } from './voxel-models.js';
+// Three and the voxel models are imported inside createWorld, not here. The only
+// thing the scroll logic ever borrowed from Three was MathUtils.clamp, and this
+// one line replaces it, so the 3D bundle stays off the critical path.
+const clamp=(v,min,max)=>v<min?min:v>max?max:v;
 // The English page hands us its dictionary on the global; the Spanish page has none.
 const t=(key,fallback)=>globalThis.__I18N?.[key]??fallback;
 const reduced=matchMedia('(prefers-reduced-motion: reduce)'),small=matchMedia('(max-width:900px)');
@@ -19,17 +20,17 @@ function updateDepth(){
   for(const el of depthSections){
     const rect=el.getBoundingClientRect();
     if(rect.bottom<0||rect.top>innerHeight)continue;
-    const pass=THREE.MathUtils.clamp((innerHeight-rect.top)/(innerHeight+rect.height),0,1);
+    const pass=clamp((innerHeight-rect.top)/(innerHeight+rect.height),0,1);
     el.style.setProperty('--depth-y',paused?'0px':((pass-.5)*(small.matches?30:100)).toFixed(1)+'px');
     el.style.setProperty('--depth-turn',paused||small.matches?'0deg':((pass-.5)*-7).toFixed(2)+'deg');
   }
   const slot=sceneWrap.parentElement;
-  if(small.matches&&slot.classList.contains('mobile-scene-slot')){const rect=slot.getBoundingClientRect();scenePass=THREE.MathUtils.clamp((innerHeight-rect.top)/(innerHeight+rect.height),0,1);}else scenePass=.5;
+  if(small.matches&&slot.classList.contains('mobile-scene-slot')){const rect=slot.getBoundingClientRect();scenePass=clamp((innerHeight-rect.top)/(innerHeight+rect.height),0,1);}else scenePass=.5;
 }
 function measure(){positions=sceneSections.map(el=>({top:el.getBoundingClientRect().top+scrollY,stage:Number(el.dataset.scene)}));}
 function onScroll(){const y=scrollY+innerHeight*.35;stage=0;for(const p of positions)if(y>=p.top)stage=p.stage;
 const index=Math.max(0,positions.findLastIndex(p=>y>=p.top)),from=positions[index],to=positions[index+1];
-routeProgress=from?(to?from.stage+THREE.MathUtils.clamp((y-from.top)/Math.max(1,to.top-from.top),0,1)*(to.stage-from.stage):from.stage):0;
+routeProgress=from?(to?from.stage+clamp((y-from.top)/Math.max(1,to.top-from.top),0,1)*(to.stage-from.stage):from.stage):0;
 progress.style.transform='scaleX('+scrollY/Math.max(1,document.documentElement.scrollHeight-innerHeight)+')';const show=stage>=1&&stage<=3;dock.classList.toggle('show',show);dock.inert=!show;dock.querySelectorAll('a').forEach((a,i)=>{a.classList.toggle('active',stage===i+1);if(stage===i+1)a.setAttribute('aria-current','step');else a.removeAttribute('aria-current');});const hidden=stage===4||stage===5;sceneWrap.style.opacity=hidden?'0':'1';document.body.classList.toggle('scene-off',hidden);mountScene();updateDepth();}
 addEventListener('scroll',onScroll,{passive:true});addEventListener('resize',()=>{measure();onScroll();},{passive:true});document.querySelectorAll('details').forEach(el=>el.addEventListener('toggle',measure));document.fonts.ready.then(()=>{measure();onScroll();});measure();onScroll();
 // The scene canvas is pointer-transparent and sits under the text layer, so the
@@ -37,8 +38,14 @@ addEventListener('scroll',onScroll,{passive:true});addEventListener('resize',()=
 addEventListener('pointermove',e=>{if(small.matches||e.pointerType!=='mouse')return;const r=sceneWrap.getBoundingClientRect();document.body.classList.toggle('scene-hot',e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom);},{passive:true});
 addEventListener('pointerleave',()=>document.body.classList.remove('scene-hot'));
 if(!reduced.matches&&'IntersectionObserver'in window){const observer=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');observer.unobserve(e.target);}}),{threshold:.08});document.querySelectorAll('.chapter-content,.learning-list>div,.study-row,.journey-intro').forEach(el=>{el.classList.add('reveal');observer.observe(el);});}
-try{createWorld();}catch(error){document.body.classList.add('webgl-unavailable');console.warn(t('scene.unavailable','La escena 3D no está disponible.'),error);}
-function createWorld(){
+// The island is decorative, so it waits for the browser to go idle instead of
+// competing with the first paint. Three, the CPU fallback and the voxel models
+// are imported here and nowhere else, which is what keeps them off the initial
+// load: on a throttled phone they were the whole blocking time.
+const startWorld=()=>createWorld().catch(error=>{document.body.classList.add('webgl-unavailable');console.warn(t('scene.unavailable','La escena 3D no está disponible.'),error);});
+if('requestIdleCallback'in window)requestIdleCallback(startWorld,{timeout:2500});else addEventListener('load',()=>setTimeout(startWorld,200));
+async function createWorld(){
+const [THREE,{VoxelRenderer},{BOX,createMaterials,buildCharacter,buildTree}]=await Promise.all([import('./three.module.js'),import('./voxel-renderer.js'),import('./voxel-models.js')]);
 let canvas=document.querySelector('#world'),renderer;
 try { renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true,powerPreference:'low-power'}); }
 catch { const replacement=document.createElement('canvas');replacement.id='world';canvas.replaceWith(replacement);canvas=replacement;renderer=new VoxelRenderer(canvas);document.body.classList.add('software-3d'); }
