@@ -8,7 +8,11 @@
   <meta name="robots" content="noindex,follow">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- La hoja de Google Fonts se carga sin bloquear el pintado: media="print"
+       la deja fuera del render critico y onload la devuelve a la pagina. La
+       URL ya pide display=swap, asi que el texto nunca espera a la fuente. -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" media="print" onload="this.media=&#39;all&#39;">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"></noscript>
   <link rel="stylesheet" href="/style.css">
   <style>
     /* Todas las rutas de esta pagina son absolutas a proposito. Vercel sirve el

@@ -29,7 +29,11 @@
   <link rel="alternate" hreflang="en" href="https://www.jorgetohme.com/en/juego.html">
   <link rel="alternate" hreflang="x-default" href="https://www.jorgetohme.com/juego.html">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- La hoja de Google Fonts se carga sin bloquear el pintado: media="print"
+       la deja fuera del render critico y onload la devuelve a la pagina. La
+       URL ya pide display=swap, asi que el texto nunca espera a la fuente. -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" media="print" onload="this.media=&#39;all&#39;">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"></noscript>
   <link rel="stylesheet" href="./style.css">
   <style>
     html{scroll-behavior:auto}

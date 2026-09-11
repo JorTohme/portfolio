@@ -74,6 +74,20 @@ Si cambian las direcciones del sitio, actualizá `dist/sitemap.xml` y su `lastmo
 
 Dos cosas que no son código y pesan más que todo lo anterior: dar de alta el dominio en Google Search Console y enviar el sitemap desde ahí, y que el perfil de LinkedIn enlace a `jorgetohme.com`. Sin eso, Google puede tardar mucho en descubrir el sitio.
 
+## Rendimiento
+
+Tres decisiones sostienen los tiempos de carga y conviene no deshacerlas sin medir.
+
+**La hoja de Google Fonts no bloquea el pintado.** Se pide con `media="print"` y un `onload` que la devuelve a la página, con una copia dentro de `<noscript>`. La URL ya incluye `display=swap`, así que el texto nunca espera a la fuente. Lighthouse medía 600 ms de bloqueo antes de esto.
+
+**`dist/three.module.js` está minificado.** Sin minificar pesaba 1,28 MB y viajaba en 278 KB comprimidos, porque el código con nombres largos y comentarios comprime mal. Minificado son 672 KB en disco y unos 141 KB comprimidos. Si actualizás Three, minificá la versión nueva antes de reemplazarlo; `dist/THREE-LICENSE.txt` tiene que seguir ahí.
+
+**La isla 3D se construye en tiempo ocioso, no durante la carga.** `main.js` importa Three, el renderizador de CPU y los modelos voxel con `import()` dinámico dentro de `createWorld`, y `requestIdleCallback` dispara esa función. Por eso `main.js` define su propio `clamp` de una línea: `THREE.MathUtils.clamp` era lo único que el scroll le pedía a Three, y bastaba para arrastrar toda la librería al arranque. **Si volvés a usar `THREE.` fuera de `createWorld`, la librería vuelve a la ruta crítica** y se pierde la mejora.
+
+Medido con Lighthouse a CPU 12x frenada, sirviendo archivos estáticos, antes y después: LCP de 9,1 s a 5,8 s, FCP de 4,9 s a 3,2 s. El tiempo de bloqueo sube unos 100 ms, porque construir la isla sigue costando lo mismo y ahora ocurre más tarde. El costo que queda es la isla en sí: el siguiente paso, si hiciera falta, es no renderizarla en celulares y dejar solo el fondo voxel.
+
+Los logos de los capítulos se guardan a 128 px, el tamaño en que se ven, y con `loading="lazy"`. Estaban a 400 px y se descargaban siempre.
+
 ## La página de error
 
 `dist/404.html` se sirve sola: Vercel toma ese nombre de archivo en la carpeta publicada y lo devuelve, con estado 404, para cualquier dirección que no exista. No necesita configuración en `vercel.json`.
