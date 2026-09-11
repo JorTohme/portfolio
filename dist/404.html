@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#174c38">
+  <title>Jorge Tohmé — Página no encontrada</title>
+  <meta name="description" content="La dirección que buscabas no está en el recorrido.">
+  <meta name="robots" content="noindex,follow">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    /* Todas las rutas de esta pagina son absolutas a proposito. Vercel sirve el
+       404 en la direccion que el visitante pidio, sin redirigir, asi que "./algo"
+       se resolveria contra esa ruta inventada y no contra la raiz del sitio. */
+    .lost{position:relative;z-index:1;min-height:100svh;padding:150px 5% 95px;display:flex;flex-direction:column;justify-content:center}
+    .lost h1{font-size:clamp(4rem,8.3vw,8.75rem);line-height:.98;max-width:1000px}
+    .lost>p{margin-top:34px;max-width:430px;font-size:1.0625rem;line-height:1.65;opacity:.8}
+    .lost .round-link{margin-top:42px;align-self:flex-start}
+    @media(max-width:900px){.lost{min-height:0;height:auto;padding:45px 6% 40px;display:block}.lost .round-link{margin-top:30px}}
+  </style>
+  <!-- Vercel Web Analytics. Sirve para ver que direcciones rotas visita la
+       gente, que es la unica metrica util de esta pagina. -->
+  <script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments)};</script>
+  <script defer src="/_vercel/insights/script.js"></script>
+</head>
+<body>
+  <div class="scenic-world" aria-hidden="true">
+    <picture class="scenery scenery-forest"><source media="(max-width: 900px)" srcset="/assets/voxel-forest-mobile.webp"><img src="/assets/voxel-forest.webp" alt="" width="1536" height="1024" decoding="async" fetchpriority="high"></picture>
+  </div>
+  <div class="noise" aria-hidden="true"></div>
+  <header class="header">
+    <a class="wordmark" id="home-mark" href="/" aria-label="Jorge Tohmé, inicio">jt<span class="wordmark-star">✳</span></a>
+    <div class="header-end"><a class="contact-link" id="t-contact" href="mailto:jorlopeztohme@gmail.com">Hablemos <span aria-hidden="true">↗</span></a></div>
+  </header>
+  <main class="lost">
+    <div class="hero-kicker"><span class="tiny-cross">+</span> ERROR 404</div>
+    <h1 id="t-title">Esta pieza<br><span class="outline-word">no existe.</span></h1>
+    <p id="t-body">La dirección que buscabas no está en el recorrido. Quizás la moví, o quizás nunca llegué a construirla.</p>
+    <a class="round-link" id="t-cta" href="/"><span class="circle-arrow" aria-hidden="true">↑</span><span id="t-ctatext">Volver al inicio</span></a>
+    <div class="hero-footer"><span>JORGE TOHMÉ · ARGENTINA</span><span>ERROR 404</span></div>
+  </main>
+  <script>
+    // Esta pagina se sirve en cualquier ruta, asi que el idioma sale de la
+    // direccion que el visitante pidio: /en/lo-que-sea contesta en ingles.
+    // Va al final del cuerpo y sin defer para correr antes del primer pintado.
+    // ponytail: diccionario inline de cuatro claves; si crecen, usar i18n.js.
+    if (location.pathname.startsWith('/en/')) {
+      document.documentElement.lang = 'en';
+      document.title = 'Jorge Tohmé — Page not found';
+      const EN = {
+        't-title': 'This piece<br><span class="outline-word">does not exist.</span>',
+        't-body': 'The address you were looking for is not part of the journey. Maybe I moved it, or maybe I never got to build it.',
+        't-ctatext': 'Back to the start',
+        't-contact': 'Let’s talk <span aria-hidden="true">↗</span>'
+      };
+      for (const id in EN) document.getElementById(id).innerHTML = EN[id];
+      for (const id of ['home-mark', 't-cta']) document.getElementById(id).href = '/en/';
+      document.getElementById('home-mark').setAttribute('aria-label', 'Jorge Tohmé, home');
+    }
+  </script>
+</body>
+</html>

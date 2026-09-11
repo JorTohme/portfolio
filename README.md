@@ -37,6 +37,7 @@ Usá el servidor local: abrir `index.html` con doble clic puede bloquear los mó
 | `dist/i18n/en.js` | Toda la copia en inglés, una clave por elemento |
 | `dist/en/index.html` | Portada en inglés |
 | `dist/en/juego.html` | Juego en inglés |
+| `dist/404.html` | Página de dirección no encontrada, en los dos idiomas |
 | `dist/robots.txt` | Permiso de rastreo y dirección del sitemap |
 | `dist/sitemap.xml` | Las cuatro direcciones del sitio, con su par en el otro idioma |
 | `dist/assets/og-cover.jpg` | Imagen de previsualización al compartir el link |
@@ -72,6 +73,16 @@ Las dos portadas llevan además un bloque `application/ld+json` con un `Person`,
 Si cambian las direcciones del sitio, actualizá `dist/sitemap.xml` y su `lastmod`.
 
 Dos cosas que no son código y pesan más que todo lo anterior: dar de alta el dominio en Google Search Console y enviar el sitemap desde ahí, y que el perfil de LinkedIn enlace a `jorgetohme.com`. Sin eso, Google puede tardar mucho en descubrir el sitio.
+
+## La página de error
+
+`dist/404.html` se sirve sola: Vercel toma ese nombre de archivo en la carpeta publicada y lo devuelve, con estado 404, para cualquier dirección que no exista. No necesita configuración en `vercel.json`.
+
+**Todas sus rutas son absolutas (`/style.css`, `/assets/…`) y tienen que seguir siéndolo.** La página se muestra en la dirección que el visitante pidió, sin redirigir, así que `./style.css` se resolvería contra esa ruta inventada y la página aparecería sin estilos.
+
+El idioma sale de la dirección: si empieza con `/en/`, un script al final del cuerpo cambia los textos, el `lang` y los enlaces al inglés. Son cuatro claves en línea, no usa `i18n.js`; si crecen, conviene mudarlas al diccionario.
+
+Lleva `noindex` y no está en el sitemap, porque una página de error indexada compite con las reales. Sí carga las analíticas: saber qué direcciones rotas visita la gente es lo único que vale la pena medir acá.
 
 ## Seguridad
 
